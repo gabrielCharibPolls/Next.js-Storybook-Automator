@@ -2,6 +2,8 @@ import os
 import re
 import shutil
 import subprocess
+import json
+
 
 #####################################################################
 # Chemin vers le dossier des composants Next.js
@@ -11,10 +13,29 @@ import subprocess
 ######################################################################
 
 
+#########################################################################
+## etpe 1 : verifier si storybook est installer dans le project 
+## si c'est pas le cas il installe via la commande 
+#########################################################################
 
 
 
-import os
+# Chemin vers le fichier package.json 
+package_file_path = "chemin/vers/package.json"
+
+# Charger le contenu du fichier package.json
+with open(package_file_path) as package_file:
+    package_data = json.load(package_file)
+
+# Vérifier si la dépendance Storybook est présente
+if "@storybook/react" not in package_data["dependencies"]:
+    # Installer la dépendance Storybook
+    subprocess.run(["npm", "install", "--save-dev", "@storybook/react"])
+
+
+
+
+
 
 # Récupère la liste de tous les fichiers .tsx dans le dossier components
 files = os.listdir("components")
@@ -38,7 +59,7 @@ for file in tsx_files:
 ############################################################################
 ################code depe lerning #########################################
 ############################################################################
-import tensorflow as tf
+
 
 # Charger les données d'entraînement
 train_data = [...] # Les données d'entraînement
