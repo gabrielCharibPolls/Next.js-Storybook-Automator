@@ -4,7 +4,6 @@ import shutil
 import subprocess
 import json
 
-
 #####################################################################
 # Chemin vers le dossier des composants Next.js
 # attention => faire en sorte que çà fonctionne avec ui/compoent 
@@ -17,33 +16,40 @@ import json
 ## etape 1 : verifier si storybook est installer dans le project 
 ## si c'est pas le cas il installe via la commande 
 #########################################################################
-
-
-##########################################################################
-# Chemin vers le fichier package.json 
+# Chemin du fichier package.json
 package_file_path = "package.json"
 
-###########################################################################
-# Charger le contenu du fichier package.json
-with open(package_file_path) as package_file:
-    package_data = json.load(package_file)
+#######################################################################
+##j'ai une erreur quand c'est installer on me dit qu'il retouve pas
+##
+#######################################################################
 
-# Vérifier si la dépendance Storybook est présente
-if "@storybook/react" not in package_data["dependencies"]:
-    # Demander à l'utilisateur s'il souhaite installer Storybook
-    install_storybook = input("Storybook n'est pas installé. Voulez-vous l'installer ? (y/n) ")
+try:
+    # Charger le contenu du fichier package.json
+    with open(package_file_path) as package_file:
+        package_data = json.load(package_file)
 
-    if install_storybook.lower() == "y":
-        # Demander à l'utilisateur le chemin du répertoire d'installation
-        install_path = input("Entrez le chemin du répertoire d'installation de Storybook : ")
+    # Vérifier si la dépendance Storybook est présente
+    if "@storybook/react" not in package_data["devDependencies"]:
+        # Demander à l'utilisateur s'il souhaite installer Storybook
+        install_storybook = input("Storybook n'est pas installé. Voulez-vous l'installer ? (y/n) ")
 
-        # Installer la dépendance Storybook dans le répertoire spécifié
-        subprocess.run(["npm", "install", "--save-dev" ], cwd=install_path)
-        print("Storybook a été installé avec succès dans le répertoire :", install_path)
+        if install_storybook.lower() == "y":
+            # Demander à l'utilisateur le chemin du répertoire d'installation
+            install_path = input("Entrez le chemin du répertoire d'installation de Storybook : ")
+
+            # Installer la dépendance Storybook dans le répertoire spécifié
+            subprocess.run(["npm", "install", "--save-dev", "@storybook/react"], cwd=install_path)
+            print("Storybook a été installé avec succès dans le répertoire :", install_path)
+        else:
+            print("Storybook n'a pas été installé.")
     else:
-        print("Storybook n'a pas été installé.")
-else:
-    print("Storybook est déjà installé.")
+        print("Storybook est déjà installé.")
+except FileNotFoundError:
+    print("Le fichier package.json n'a pas été trouvé.")
+except json.JSONDecodeError:
+    print("Le fichier package.json est invalide ou malformé.") 
+
 
 ###########################################################################################################
 # etape 2 : rechercher dans tout les dossiers et sous-dossiers un dossier qui s'appel components ou ui 
