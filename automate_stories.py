@@ -19,36 +19,44 @@ import json
 # Chemin du fichier package.json
 package_file_path = "package.json"
 
-#######################################################################
-##j'ai une erreur quand c'est installer on me dit qu'il retouve pas
-##
-#######################################################################
-
 try:
     # Charger le contenu du fichier package.json
     with open(package_file_path) as package_file:
         package_data = json.load(package_file)
 
-    # Vérifier si la dépendance Storybook est présente
-    if "@storybook/react" not in package_data["devDependencies"]:
-        # Demander à l'utilisateur s'il souhaite installer Storybook
-        install_storybook = input("Storybook n'est pas installé. Voulez-vous l'installer ? (y/n) ")
+    # Vérifier si la clé "devDependencies" est présente
+    if "devDependencies" in package_data:
+        # Vérifier si la dépendance Storybook est présente
+        if "@storybook/react" not in package_data["devDependencies"]:
+            # Demander à l'utilisateur s'il souhaite installer Storybook
+            install_storybook = input("Storybook n'est pas installé. Voulez-vous l'installer ? (y/n) ")
 
+            if install_storybook.lower() == "y":
+                # Demander à l'utilisateur le chemin du répertoire d'installation
+                install_path = input("Entrez le chemin du répertoire d'installation de Storybook : ")
+
+                # Installer la dépendance Storybook dans le répertoire spécifié
+                subprocess.run(["npm", "install", "--save-dev", "@storybook/react"], cwd=install_path)
+                print("Storybook a été installé avec succès dans le répertoire :", install_path)
+            else:
+                print("Storybook n'a pas été installé.")
+        else:
+            print("Storybook est déjà installé.")
+    else:
+        print("La clé 'devDependencies' est manquante dans le fichier package.json.")
+        install_storybook = input("Storybook n'est pas installé. Voulez-vous l'installer ? (y/n) ")
         if install_storybook.lower() == "y":
-            # Demander à l'utilisateur le chemin du répertoire d'installation
             install_path = input("Entrez le chemin du répertoire d'installation de Storybook : ")
 
             # Installer la dépendance Storybook dans le répertoire spécifié
             subprocess.run(["npm", "install", "--save-dev", "@storybook/react"], cwd=install_path)
             print("Storybook a été installé avec succès dans le répertoire :", install_path)
-        else:
-            print("Storybook n'a pas été installé.")
-    else:
-        print("Storybook est déjà installé.")
+
 except FileNotFoundError:
     print("Le fichier package.json n'a pas été trouvé.")
 except json.JSONDecodeError:
-    print("Le fichier package.json est invalide ou malformé.") 
+    print("Le fichier package.json est invalide ou malformé.")
+
 
 
 ###########################################################################################################
@@ -56,16 +64,16 @@ except json.JSONDecodeError:
 #########################################################################################################
 
 
-import os
-
 def find_components_folder():
     """
     Fonction qui recherche le dossier "components" ou "ui" dans un projet Next.js
-    à partir du répertoire en cours.
+    à partir du répertoire en cours, en excluant le dossier "node_modules".
 
     :return: le chemin complet du dossier "components" ou "ui" s'il est trouvé, None sinon
     """
     for root, dirs, files in os.walk('.'):
+        if "node_modules" in dirs:
+            dirs.remove("node_modules")  # exclure le dossier "node_modules" de la recherche
         if "components" in dirs:
             return os.path.join(root, "components")
         elif "ui" in dirs:
