@@ -87,6 +87,23 @@ else:
     print("Le dossier 'components' ou 'ui' n'a pas été trouvé.")
 
 
+###########################################################################
+#  lister tout les compsoants 
+###########################################################################
+def list_components():
+    components_folder_path = find_components_folder()
+    if components_folder_path is not None:
+        print('###########################################################')
+        print('### liste de composants ')
+        print('###########################################################')
+        for file_name in os.listdir(components_folder_path):
+            if file_name.endswith(".js"):
+                print(file_name)
+    else:
+        print("Le dossier 'components' ou 'ui' n'a pas été trouvé.")
+
+list_components()
+
 
 
 
