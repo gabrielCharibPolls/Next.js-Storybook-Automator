@@ -3,6 +3,7 @@ import re
 import shutil
 import subprocess
 import json
+import openai
 
 #####################################################################
 # Chemin vers le dossier des composants Next.js
@@ -96,13 +97,53 @@ def list_components():
         print('###########################################################')
         print('### liste de composants ')
         print('###########################################################')
+        component_list = []
         for file_name in os.listdir(components_folder_path):
             if file_name.endswith(".js"):
-                print(file_name)
+                component_list.append(file_name)
+        
+        # Affichage de la liste des composants
+        for component in component_list:
+            print(component)
     else:
         print("Le dossier 'components' ou 'ui' n'a pas été trouvé.")
 
 list_components()
+
+
+
+
+def generate_chat_response(user_input):
+    # Votre clé d'API OpenAI
+    openai.api_key = "#################"
+
+    # Liste des composants
+    components = [
+        "Component1",
+        "Component2",
+        "Component3",
+      
+    ]
+
+    # Concaténation des composants avec le texte de l'utilisateur
+    chat_input = f"Liste des composants : {', '.join(components)}\nUtilisateur : {user_input}"
+
+    # Appel à l'API de chat GPT pour obtenir la réponse générée
+    response = openai.Completion.create(
+        model='text-davinci-003',
+        prompt=chat_input,
+        max_tokens=30  # Définir le nombre de tokens souhaité
+    )
+    # Récupération de la réponse générée
+    chat_response = response.choices[0].text.strip()
+
+    return chat_response
+
+# Exemple d'utilisation
+user_input = input("puta pregunta ")
+response = generate_chat_response(user_input)
+print("Bot : " + response)
+
 
 
 
